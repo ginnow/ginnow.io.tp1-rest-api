@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP-REST-API-1-GC</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Highlight TR -->
+    <style>
+        tr.highlight:hover {
+            background-color: rgba(25, 221, 247, 0.5);
+        }
+    </style>
+</head>
+
+<body class="grey lighten-2">
+    <div id="facturas" class="row">
+        <div class="row grey darken-4 z-depth-4">
+            <div class="grey darken-4 z-depth-3">
+                <div class="row z-depth-2">
+                    <div class="col s6">
+                        <div class="input-field col s6 ">
+                            <input class="white-text" v-model="c_busq_fac" type="text" placeholder="INGRESE N° DE FACTURA">
+                        </div>
+                        <div class="input-field col s6">
+                            <button v-on:click="buscarFactura()" class="black-text text-darken-1 btn waves-effect waves-light cyan accent-4 z-depth-3 pulse">BUSCAR</button>
+                        </div>
+                    </div>
+                    <div class="col s6">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s4 ">
+            <div class="row">
+                <div class="col s12">
+                    <h4 class="header center">INGRESO</h4>
+                    <div class="card horizontal z-depth-4">
+                        <div class="row">
+                            <form class="col s12 cyan-text">
+                                <div class="input-field col s9">
+                                    <i class="material-icons prefix">event_note</i>
+                                    <input readonly v-model="c_idfactura" id="numfac" type="text" placeholder="N° DE FACTURA">
+                                </div>
+                                <div class="input-field col s11">
+                                    <i class="material-icons prefix">local_grocery_store</i>
+                                    <input v-model="c_producto" type="text" placeholder="INGRESE PRODUCTO">
+                                    <label>PRODUCTO</label>
+                                </div>
+                                <div class="input-field col s11">
+                                    <i class="material-icons prefix">account_circle</i>
+                                    <input v-model="c_cliente" id="cliente" type="text" placeholder="INGRESE CLIENTE">
+                                    <label for="cliente">CLIENTE</label>
+                                </div>
+                                <div class="input-field col s5">
+                                    <i class="material-icons prefix">flag</i>
+                                    <input v-model="c_iva" id="iva" type="text" placeholder="INGRESE IVA">
+                                    <label for="iva">IVA</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <i class="material-icons prefix">help_outline</i>
+                                    <input v-model="c_cantidad" id="cantidad" type="number" placeholder="INGRESE CANTIDAD">
+                                    <label for="cantidad">CANTIDAD</label>
+                                </div>
+                                <div class="input-field col s5">
+                                    <i class="material-icons prefix">money_off</i>
+                                    <input v-model="c_subtotal" id="subtotal" type="number" placeholder="INGRESE SUBTOTAL">
+                                    <label for="subtotal">SUBTOTAL</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <i class="material-icons prefix">attach_money</i>
+                                    <input v-model="c_total" id="total" type="number" placeholder="INGRESE TOTAL">
+                                    <label for="total">TOTAL</label>
+                                </div>
+                                <div class="input-field col s11">
+                                    <i class="material-icons prefix">help_outline</i>
+                                    <input v-model="c_pago" id="pago" type="text" placeholder="INGRESE TIPO DE PAGO">
+                                    <label for="pago">METODO DE PAGO</label>
+                                </div>
+                                <div class="col s4">
+                                    <button v-on:click="guardarFactura()" class="btn waves-effect waves-light blue darken-4 z-depth-3" type="button" name="action">GUARDAR
+                                                <i class="material-icons right">save</i>
+                            </button>
+                                </div>
+                                <div class="col s4">
+                                    <button v-on:click="actualizarFactura()" class="btn waves-effect waves-light orange darken-4 z-depth-3" type="button" name="action">ACTUALIZAR
+                                                <i class="material-icons right">screen_rotation</i>
+                                            </button>
+                                </div>
+                                <div class="col s4">
+                                    <button v-on:click="eliminarFactura()" class=" btn waves-effect waves-light red darken-4 z-depth-3" type="button " name="action ">ELIMINAR
+                                                <i class="material-icons right">delete_forever</i>
+                                            </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s8">
+            <div class="row">
+                <div class="col s12">
+                    <h4 class="header center ">FACTURACION</h4>
+                    <div class="card horizontal z-depth-3 ">
+                        <table class="responsive-table centered">
+                            <tr class="centered">
+                                <th class="center">PRODUCTO</th>
+                                <th class="center">CLIENTE</th>
+                                <th class="center">IVA</th>
+                                <th class="center">CANTIDAD</th>
+                                <th class="center">SUBTOTAL</th>
+                                <th class="center">TOTAL</th>
+                                <th class="center">TIPO PAGO</th>
+                                <th>EDITAR</th>
+                            </tr>
+                            <tr v-for="factura of lista_facturas " class="highlight z-depth-0 ">
+                                <td>{{factura.nombre_producto}}</td>
+                                <td>{{factura.nombre_cliente}}</td>
+                                <td>{{factura.iva}}</td>
+                                <td>{{factura.cantidad}}</td>
+                                <td>{{factura.subtotal}}</td>
+                                <td>{{factura.total}}</td>
+                                <td>{{factura.forma_pago}}</td>
+                                <td><a v-on:click="editarFactura ( factura.id_factura,factura.nombre_producto,factura.nombre_cliente,factura.iva, factura.cantidad,factura.subtotal,factura.total,factura.forma_pago ) " class="btn-floating btn-tiny waves-effect
+                                waves-red cyan z-depth-2"><i class="material-icons ">edit</i></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js "></script>
+    <script src="index.js "></script>
+</body>
+
+
+</html>
